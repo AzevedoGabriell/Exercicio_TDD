@@ -27,7 +27,7 @@ public class TicketTest {
         assertFalse(halfPriceTicket.isSold());
     }
 
-     @Test
+    @Test
     public void testMarkTicketAsSold() {
         Ticket ticket = new Ticket(4, TicketType.NORMAL);
         assertFalse(ticket.isSold());
@@ -36,14 +36,36 @@ public class TicketTest {
     }
 
     @Test
-    public void testVipTicketPrice() {
-        Ticket vipTicket = new Ticket(5, TicketType.VIP);
-        assertEquals(20.0, vipTicket.getPrice());
+    public void testSetTicketTypeAndPrice() {
+        Ticket ticket = new Ticket(5, TicketType.NORMAL);
+        assertEquals(10.0, ticket.getPrice());
+        
+        ticket.setType(TicketType.VIP);
+        assertEquals(TicketType.VIP, ticket.getType());
+        assertEquals(20.0, ticket.getPrice());
+        
+        ticket.setType(TicketType.MEIA_ENTRADA);
+        assertEquals(TicketType.MEIA_ENTRADA, ticket.getType());
+        assertEquals(5.0, ticket.getPrice());
     }
 
     @Test
-    public void testHalfPriceTicketPrice() {
-        Ticket halfPriceTicket = new Ticket(6, TicketType.MEIA_ENTRADA);
-        assertEquals(5.0, halfPriceTicket.getPrice());
+    public void testTicketId() {
+        Ticket ticket = new Ticket(6, TicketType.NORMAL);
+        assertEquals(6, ticket.getId());
+    }
+
+    @Test
+    public void testInvalidDiscountOnHalfPriceTicket() {
+        Ticket halfPriceTicket = new Ticket(7, TicketType.MEIA_ENTRADA);
+        halfPriceTicket.applyDiscount(0.2); 
+        assertEquals(5.0, halfPriceTicket.getPrice()); 
+    }
+
+    @Test
+    public void testValidDiscountOnVipTicket() {
+        Ticket vipTicket = new Ticket(8, TicketType.VIP);
+        vipTicket.applyDiscount(0.25);
+        assertEquals(15.0, vipTicket.getPrice());
     }
 }
