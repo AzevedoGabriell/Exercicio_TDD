@@ -60,8 +60,8 @@ class FaturaTest {
 	@Test
 	void processarPagamentosFatura2() {
 		List<Conta> contas = List.of(
-				new Conta("1", LocalDate.of(2023, 2, 6), 700, CARTAO_CREDITO),
-				new Conta("2", LocalDate.of(2023, 2, 17), 800, TRANSFERENCIA_BANCARIA)
+			new Conta("1", LocalDate.of(2023, 2, 6), 700, CARTAO_CREDITO),
+			new Conta("2", LocalDate.of(2023, 2, 17), 800, TRANSFERENCIA_BANCARIA)
 		);
 
 		this.faturas.get(2).processarPagamentos(contas);
