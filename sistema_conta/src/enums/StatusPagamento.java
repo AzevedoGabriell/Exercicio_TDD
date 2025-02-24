@@ -1,5 +1,5 @@
 package enums;
 
 public enum StatusPagamento {
-    PENDENTE, PAGO
+    IRRELEVANTE, PENDENTE, PAGO
 }

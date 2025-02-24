@@ -14,7 +14,7 @@ public class Conta {
 	public Conta(String codigo, LocalDate data, double valor, TipoPagamento tipo) {
 		this.codigo = codigo;
 		this.data = data;
-		this.valor = valor;
+		this.valor = valor >= 0 ? valor : 0;
 		this.tipo = tipo;
 	}
 

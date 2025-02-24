@@ -9,7 +9,7 @@ import java.util.List;
 
 import static enums.StatusPagamento.*;
 
-class Fatura {
+public class Fatura {
 
 	private LocalDate data;
 	private double valor;
@@ -19,9 +19,9 @@ class Fatura {
 
 	public Fatura(LocalDate data, double valor, String cliente) {
 		this.data = data;
-		this.valor = valor;
+		this.valor = valor >= 0 ? valor : 0;
 		this.cliente = cliente;
-		this.status = PENDENTE;
+		this.status = valor >= 0.01 ? PENDENTE : IRRELEVANTE;
 		this.pagamentos = new ArrayList<>();
 	}
 
@@ -30,36 +30,40 @@ class Fatura {
 	}
 
 	public void processarPagamentos(List<Conta> contas) {
-		double valorPago = 0;
+		if (this.getStatus().equals(PENDENTE)) {
+			double valorPago = 0;
 
-		for (Conta conta : contas) {
-			switch (conta.getTipo()) {
-				case BOLETO -> {
-					if (conta.getValor() >= 0.01 && conta.getValor() <= 5000.00) {
-						if (conta.getData().isAfter(this.data)) {
-							valorPago += conta.getValor() * 1.1;
-						} else {
+			for (Conta conta : contas) {
+				switch (conta.getTipo()) {
+					case BOLETO -> {
+						if (conta.getValor() >= 0.01 && conta.getValor() <= 5000.00) {
+							if (conta.getData().isAfter(this.data)) {
+								valorPago += conta.getValor() * 1.1;
+							} else {
+								valorPago += conta.getValor();
+							}
+						}
+					}
+					case CARTAO_CREDITO -> {
+						if (conta.getData().plusDays(14).isBefore(this.data)) {
+							valorPago += conta.getValor();
+						}
+					}
+					case TRANSFERENCIA_BANCARIA -> {
+						if (!conta.getData().isAfter(this.data)) {
 							valorPago += conta.getValor();
 						}
 					}
 				}
-				case CARTAO_CREDITO -> {
-					if (conta.getData().plusDays(14).isBefore(this.data)) {
-						valorPago += conta.getValor();
-					}
-				}
-				case TRANSFERENCIA_BANCARIA -> {
-					if (!conta.getData().isAfter(this.data)) {
-						valorPago += conta.getValor();
-					}
+
+				if (conta.getValor() >= 0.01) {
+					this.pagamentos.add(conta);
 				}
 			}
 
-			this.pagamentos.add(conta);
-		}
-
-		if (valorPago >= this.valor) {
-			this.status = PAGO;
+			if (!this.pagamentos.isEmpty() && valorPago >= this.valor) {
+				this.status = PAGO;
+			}
 		}
 	}
 }
